@@ -34,12 +34,19 @@
     })
   }
 
-  function $script(paths, idOrDone, optDone) {
+  function $script(paths, idOrDoneOrOpts, optDoneOrOpts, optOpts) {
     paths = paths[push] ? paths : [paths]
-    var idOrDoneIsDone = idOrDone && idOrDone.call
-      , done = idOrDoneIsDone ? idOrDone : optDone
-      , id = idOrDoneIsDone ? paths.join('') : idOrDone
-      , queue = paths.length
+    
+    var secondIsDone = idOrDoneOrOpts && idOrDoneOrOpts.call;
+    var thirdIsDone = optDoneOrOpts && optDoneOrOpts.call;
+    
+    var secondIsId = idOrDoneOrOpts && (typeof idOrDoneOrOpts === 'string');
+    
+    var done = secondIsDone ? idOrDoneOrOpts : (thirdIsDone ? optDoneOrOpts : null);
+    var id = secondIsId ? idOrDoneOrOpts : paths.join('');
+    var opts = secondIsDone ? optDoneOrOpts : (thirdIsDone ? optOpts : optDoneOrOpts);
+
+    var queue = paths.length
     function loopFn(item) {
       return item.call ? item() : list[item]
     }
